@@ -10,16 +10,16 @@ Vite + React + TypeScript port of the `paincheck_figma` prototype.
 Routes: `/` pick → confirm → saved, and `/history`. (`/check` redirects to `/`.)
 
 ## Push reminders (PWA + web push)
-Logging a dose (History → "Staff: record a dose") tells the server, which sends a push 30 minutes later.
+Logging a dose (History → "Staff: record a dose") tells the server, which sends a push after `REMINDER_DELAY_MS` (default 30 minutes).
 Recording a pain reading cancels pending reminders. The notification's "In 10 min" action (Android/desktop) snoozes via the server.
 
 1. Open the app → **Turn on reminders** (prompt on the main screen; also at the bottom of History) (allow notifications). On History, use **Send test reminder** to check delivery immediately.
-2. Log a dose; the push arrives after 30 min. (For a quick demo, temporarily lower `REMINDER_DELAY_MS` in `server/src/reminders.ts`.)
+2. Log a dose; the push arrives after the delay. For a quick demo run with e.g. `REMINDER_DELAY_MS=20000 npm run dev:api`.
 
 Requirements and caveats:
 - Push needs **HTTPS** (localhost is exempt). To try it on a phone, serve over HTTPS (e.g. a tunnel or deployment).
 - **iPhone (iOS 16.4+)**: the app must be added to the Home Screen first, then opened from there. Set `VAPID_SUBJECT` to a real `mailto:` or `https:` contact (not localhost) or Apple rejects the push.
-- Server state (subscriptions, pending reminders, VAPID keys) lives in `server/data/` (git-ignored). Override with `DATA_DIR`, `PORT`, `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`.
+- Server state (subscriptions, pending reminders, VAPID keys) lives in `server/data/` (git-ignored). Override with `DATA_DIR`, `PORT`, `REMINDER_DELAY_MS`, `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`.
 - No authentication and a single implicit patient: any client can subscribe and every subscriber gets every reminder. Not safe to expose publicly as-is.
 - Readings are still stored only in the browser; the server stores no clinical data, just subscriptions and due times.
 
@@ -29,3 +29,6 @@ Requirements and caveats:
 - History stats, spike, and per-drug effect are computed from stored data (`src/domain/history.ts`), using the prototype's rules (before ≤60 min, after ≤45 min, response window 60 min, acceptable ≤3).
 - The in-app lock screen is a demo of the notification; the real one comes from web push. Patient details on History are hard-coded sample text.
 - Language (EN/PL) is shared via `painApp.lang`.
+
+## Server layout
+`server/src/router.ts` is the framework-free API; `app.ts` (Express, local) and `lambda.ts` (AWS) are thin adapters over it. Storage is the `Repo` interface (`repo.ts` JSON file locally, `dynamo.ts` on AWS). `ReminderService.fire()` waits until a reminder is due, atomically claims it, then sends, so cancel and snooze work and duplicate invocations can't double-send. Deployment: see `../infra/README.md`.
