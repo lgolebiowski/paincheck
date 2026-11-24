@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pain check: confirm level</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#171717}a:hover{color:#404040}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible,a:focus-visible{outline:3px solid #2563eb;outline-offset:3px}
+button:active{transform:scale(0.98)}
+</style>
+</helmet>
+<div lang="{{lang}}" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; background: #ffffff; color: #0a0a0a; font-family: Geist, Inter, system-ui, sans-serif; overflow: hidden; display: flex; flex-direction: column">
+
+<sc-if value="{{showMain}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; flex-direction: column; height: 844px">
+<header style="padding: 20px 20px 16px; display: flex; flex-direction: column; gap: 12px; border-bottom: 1px solid #e5e5e5">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div role="group" aria-label="{{t.langLabel}}" style="display: inline-flex; gap: 2px; padding: 3px; background: #f5f5f5; border: 1px solid #e5e5e5; border-radius: 10px">
+<button type="button" onClick="{{setEn}}" aria-pressed="{{enOn}}" style="width: 48px; height: 38px; border: 0; border-radius: 7px; background: {{enBg}}; color: {{enFg}}; box-shadow: {{enShadow}}; font-family: inherit; font-size: 15px; font-weight: 600">EN</button>
+<button type="button" onClick="{{setPl}}" aria-pressed="{{plOn}}" style="width: 48px; height: 38px; border: 0; border-radius: 7px; background: {{plBg}}; color: {{plFg}}; box-shadow: {{plShadow}}; font-family: inherit; font-size: 15px; font-weight: 600">PL</button>
+</div>
+<a href="HistoryPhone.dc.html" style="height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 0 16px; border: 1px solid #d4d4d4; border-radius: 10px; background: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path><path d="M12 7v5l4 2"></path></svg>
+{{t.viewHistory}}
+</a>
+</div>
+<h1 style="margin: 0; font-size: 28px; line-height: 34px; font-weight: 700; letter-spacing: -0.02em">{{t.title}}</h1>
+<p style="margin: 0; font-size: 16px; line-height: 22px; color: #525252">{{t.sub}}</p>
+</header>
+<div style="flex: 1; min-height: 0; padding: 16px 20px 20px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(6, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{levels}}" as="l" hint-placeholder-count="11">
+<button type="button" onClick="{{l.pick}}" aria-label="{{l.aria}}" style="grid-column: {{l.col}}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: 0; border-radius: 12px; background: {{l.bg}}; color: {{l.fg}}; font-family: inherit; box-shadow: 0 1px 2px rgba(0,0,0,0.08)">
+<span style="font-size: 44px; line-height: 46px; font-weight: 700">{{l.n}}</span>
+<span style="font-size: 15px; line-height: 18px; font-weight: 600">{{l.label}}</span>
+</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isConfirm}}" hint-placeholder-val="{{false}}">
+<div style="position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box">
+<div role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-desc" style="width: 100%; background: #ffffff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 28px 24px 24px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.25)">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center">
+<div aria-hidden="true" style="width: 120px; height: 120px; border-radius: 9999px; background: {{sel.bg}}; color: {{sel.fg}}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px">
+<span style="font-size: 60px; line-height: 60px; font-weight: 700">{{sel.n}}</span>
+<span style="font-size: 14px; font-weight: 600">{{sel.label}}</span>
+</div>
+<h2 id="confirm-title" style="margin: 0; font-size: 28px; line-height: 34px; font-weight: 700; letter-spacing: -0.02em">{{t.confirmTitle}}</h2>
+<p id="confirm-desc" style="margin: 0; font-size: 18px; line-height: 26px; color: #525252">{{t.youChose}} <strong style="color: #0a0a0a">{{sel.n}}</strong> ({{sel.desc}}).</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<button type="button" onClick="{{confirm}}" style="height: 68px; display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: 10px; border: 0; background: #171717; color: #fafafa; font-family: inherit; font-size: 22px; font-weight: 600">
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+{{t.yes}}
+</button>
+<button type="button" onClick="{{cancel}}" style="height: 68px; display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: 10px; border: 1px solid #d4d4d4; background: #ffffff; color: #0a0a0a; font-family: inherit; font-size: 22px; font-weight: 600">
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+{{t.no}}
+</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isSaved}}" hint-placeholder-val="{{false}}">
+<div style="height: 844px; box-sizing: border-box; padding: 28px 20px 24px; display: flex; flex-direction: column; gap: 24px">
+<div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center">
+<div aria-hidden="true" style="width: 96px; height: 96px; border-radius: 9999px; background: #dcfce7; color: #15803d; display: flex; align-items: center; justify-content: center">
+<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+</div>
+<h1 style="margin: 0; font-size: 30px; line-height: 36px; font-weight: 700; letter-spacing: -0.02em">{{t.thanks}}</h1>
+<p style="margin: 0; font-size: 18px; line-height: 26px; color: #525252">{{t.recorded}}</p>
+<div style="margin-top: 8px; display: flex; align-items: center; gap: 14px; padding: 14px 20px; border: 1px solid #e5e5e5; border-radius: 12px">
+<div aria-hidden="true" style="width: 56px; height: 56px; border-radius: 9999px; background: {{sel.bg}}; color: {{sel.fg}}; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700">{{sel.n}}</div>
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px">
+<span style="font-size: 18px; font-weight: 600">{{t.painLevel}} {{sel.n}} · {{sel.label}}</span>
+<span style="font-size: 15px; color: #525252">{{t.recordedAt}} {{savedTime}}</span>
+</div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<button type="button" onClick="{{done}}" style="height: 68px; border-radius: 10px; border: 0; background: #171717; color: #fafafa; font-family: inherit; font-size: 22px; font-weight: 600">{{t.done}}</button>
+<a href="HistoryPhone.dc.html" style="height: 64px; display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: 10px; border: 1px solid #d4d4d4; background: #ffffff; font-size: 20px; font-weight: 600; text-decoration: none">{{t.viewHistory}}</a>
+</div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"preview":{"editor":"enum","options":["live","confirm","saved"],"default":"confirm","section":"Preview"},"previewLevel":{"editor":"range","min":0,"max":10,"step":1,"default":7,"section":"Preview"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    var self = this;
+    this._onStorage = function (e) {
+      if (e.key === 'painApp.lang' && (e.newValue === 'en' || e.newValue === 'pl')) self.setState({ lang: e.newValue });
+    };
+    try { window.addEventListener('storage', this._onStorage); } catch (e) {}
+  }
+  componentWillUnmount() {
+    try { window.removeEventListener('storage', this._onStorage); } catch (e) {}
+  }
+  getLang() {
+    var st = this.state || {};
+    if (st.lang) return st.lang;
+    try { var s = window.localStorage.getItem('painApp.lang'); if (s === 'en' || s === 'pl') return s; } catch (e) {}
+    return 'en';
+  }
+  setLang(l) {
+    try { window.localStorage.setItem('painApp.lang', l); } catch (e) {}
+    this.setState({ lang: l });
+  }
+  strings(lang) {
+    var S = {
+      en: {
+        langLabel: 'Language', viewHistory: 'View history',
+        title: 'How much pain are you in right now?',
+        sub: 'Tap one number. 0 is no pain, 10 is the worst pain possible.',
+        confirmTitle: 'Are you sure?', youChose: 'You chose pain level', yes: 'Yes', no: 'No',
+        thanks: 'Thank you', recorded: 'Your pain level has been recorded.',
+        painLevel: 'Pain level', recordedAt: 'Recorded at', done: 'Done', locale: 'en-AU',
+        labels: ['No pain', 'Mild', 'Moderate', 'Severe', 'Worst possible'],
+        descs: ['no pain', 'mild pain', 'moderate pain', 'severe pain', 'worst possible pain']
+      },
+      pl: {
+        langLabel: 'Język', viewHistory: 'Zobacz historię',
+        title: 'Jak bardzo Cię teraz boli?',
+        sub: 'Dotknij jednej liczby. 0 to brak bólu, 10 to najgorszy możliwy ból.',
+        confirmTitle: 'Czy na pewno?', youChose: 'Wybrano poziom bólu', yes: 'Tak', no: 'Nie',
+        thanks: 'Dziękujemy', recorded: 'Twój poziom bólu został zapisany.',
+        painLevel: 'Poziom bólu', recordedAt: 'Zapisano o', done: 'Gotowe', locale: 'pl-PL',
+        labels: ['Brak bólu', 'Łagodny', 'Umiarkowany', 'Silny', 'Najgorszy możliwy'],
+        descs: ['brak bólu', 'łagodny ból', 'umiarkowany ból', 'silny ból', 'najgorszy możliwy ból']
+      }
+    };
+    return S[lang] || S.en;
+  }
+  levels(t) {
+    var c = [
+      ['#166534', '#ffffff'], ['#15803d', '#ffffff'], ['#22c55e', '#052e16'], ['#84cc16', '#1a2e05'],
+      ['#a3e635', '#1a2e05'], ['#facc15', '#422006'], ['#fbbf24', '#451a03'], ['#fb923c', '#431407'],
+      ['#f97316', '#431407'], ['#dc2626', '#ffffff'], ['#991b1b', '#ffffff']
+    ];
+    return c.map(function (col, n) {
+      var k = n === 0 ? 0 : (n <= 3 ? 1 : (n <= 6 ? 2 : (n <= 9 ? 3 : 4)));
+      return { n: n, bg: col[0], fg: col[1], label: t.labels[k], desc: t.descs[k] };
+    });
+  }
+  renderVals() {
+    var self = this;
+    var st = this.state || {};
+    var lang = this.getLang();
+    var t = this.strings(lang);
+    var preview = this.props.preview ?? 'live';
+    var startN = Number(this.props.previewLevel ?? 7);
+    var mode = st.mode ? st.mode : (preview === 'confirm' ? 'confirm' : (preview === 'saved' ? 'saved' : 'pick'));
+    var n = st.selected != null ? st.selected : startN;
+    n = isNaN(Number(n)) ? 7 : Math.min(10, Math.max(0, Number(n)));
+    var levels = this.levels(t);
+    var items = levels.map(function (l) {
+      return Object.assign({}, l, {
+        aria: t.painLevel + ' ' + l.n + ', ' + l.label.toLowerCase(),
+        col: l.n === 0 ? '1 / -1' : 'auto',
+        pick: function () { self.setState({ mode: 'confirm', selected: l.n }); }
+      });
+    });
+    var sel = levels[n];
+    var at = st.savedAt ? st.savedAt : new Date();
+    var on = { bg: '#ffffff', fg: '#0a0a0a', sh: '0 1px 2px rgba(0,0,0,0.12)' };
+    var off = { bg: 'transparent', fg: '#525252', sh: 'none' };
+    var en = lang === 'en' ? on : off, pl = lang === 'pl' ? on : off;
+    return {
+      lang: lang, t: t,
+      levels: items, sel: sel,
+      showMain: mode !== 'saved', isConfirm: mode === 'confirm', isSaved: mode === 'saved',
+      savedTime: at.toLocaleTimeString(t.locale, { hour: 'numeric', minute: '2-digit' }),
+      enOn: lang === 'en', plOn: lang === 'pl',
+      enBg: en.bg, enFg: en.fg, enShadow: en.sh, plBg: pl.bg, plFg: pl.fg, plShadow: pl.sh,
+      setEn: function () { self.setLang('en'); },
+      setPl: function () { self.setLang('pl'); },
+      confirm: function () { self.setState({ mode: 'saved', savedAt: new Date() }); },
+      cancel: function () { self.setState({ mode: 'pick' }); },
+      done: function () { self.setState({ mode: 'pick', selected: null, savedAt: null }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

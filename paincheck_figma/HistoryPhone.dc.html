@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pain history: phone</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#171717}a:hover{color:#404040}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+a:focus-visible,button:focus-visible{outline:3px solid #2563eb;outline-offset:2px}
+</style>
+</helmet>
+<div lang="{{lang}}" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; background: #fafafa; color: #0a0a0a; font-family: Geist, Inter, system-ui, sans-serif; overflow: hidden">
+<div style="height: 844px; overflow-y: auto">
+
+<header style="position: sticky; top: 0; z-index: 2; background: #ffffff; border-bottom: 1px solid #e5e5e5; padding: 12px 12px 12px 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<div style="display: flex; align-items: center; gap: 4px; min-width: 0">
+<a href="Main.dc.html" aria-label="{{t.back}}" style="width: 44px; height: 44px; flex: none; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+</a>
+<h1 style="margin: 0; font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em">{{t.title}}</h1>
+</div>
+<div role="group" aria-label="{{t.langLabel}}" style="flex: none; display: inline-flex; gap: 2px; padding: 3px; background: #f5f5f5; border: 1px solid #e5e5e5; border-radius: 10px">
+<button type="button" onClick="{{setEn}}" aria-pressed="{{enOn}}" style="width: 44px; height: 38px; border: 0; border-radius: 7px; background: {{enBg}}; color: {{enFg}}; box-shadow: {{enShadow}}; font-family: inherit; font-size: 14px; font-weight: 600">EN</button>
+<button type="button" onClick="{{setPl}}" aria-pressed="{{plOn}}" style="width: 44px; height: 38px; border: 0; border-radius: 7px; background: {{plBg}}; color: {{plFg}}; box-shadow: {{plShadow}}; font-family: inherit; font-size: 14px; font-weight: 600">PL</button>
+</div>
+</header>
+
+<div style="padding: 16px 16px 32px; display: flex; flex-direction: column; gap: 16px">
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: #525252">{{t.patient}}</p>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<span style="display: inline-flex; align-items: center; height: 28px; padding: 0 10px; border: 1px solid #e5e5e5; background: #ffffff; border-radius: 9999px; font-size: 13px; font-weight: 500">{{t.range}}</span>
+<span style="display: inline-flex; align-items: center; height: 28px; padding: 0 10px; background: #f0f0f0; border-radius: 9999px; font-size: 13px; font-weight: 500; color: #404040">{{t.sample}}</span>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{stats}}" as="s" hint-placeholder-count="4">
+<div style="background: #ffffff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 13px; line-height: 17px; font-weight: 500; color: #525252">{{s.label}}</span>
+<span style="font-size: 28px; line-height: 32px; font-weight: 700; letter-spacing: -0.02em">{{s.value}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #525252">{{s.sub}}</span>
+</div>
+</sc-for>
+</div>
+
+<div style="background: #0a0a0a; color: #fafafa; border-radius: 12px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start">
+<span aria-hidden="true" style="flex: none; width: 36px; height: 36px; border-radius: 9999px; background: {{spike.bg}}; color: {{spike.fg}}; font-size: 18px; font-weight: 700; display: flex; align-items: center; justify-content: center">{{spike.p}}</span>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 15px; font-weight: 600">{{spike.title}}</span>
+<span style="font-size: 13px; line-height: 18px; color: #d4d4d4">{{spike.text}}</span>
+</div>
+</div>
+
+<section aria-labelledby="m-chart-title" style="background: #ffffff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h2 id="m-chart-title" style="margin: 0; font-size: 16px; line-height: 22px; font-weight: 600">{{t.chartTitle}}</h2>
+<p style="margin: 0; font-size: 13px; line-height: 18px; color: #525252">{{t.chartHint}}</p>
+</div>
+<div onMouseLeave="{{leave}}" style="position: relative">
+<svg viewBox="0 0 360 232" role="img" aria-label="{{chartAria}}" style="display: block; width: 100%; height: auto; font-family: Geist, Inter, system-ui, sans-serif">
+<rect x="28" y="139" width="324" height="51" fill="#dcfce7"></rect>
+<g>
+<sc-for list="{{gridLines}}" as="g" hint-placeholder-count="6">
+<line x1="28" x2="352" y1="{{g.y}}" y2="{{g.y}}" stroke="#e5e5e5" stroke-width="1"></line>
+<text x="20" y="{{g.ty}}" text-anchor="end" font-size="10" fill="#525252">{{g.v}}</text>
+</sc-for>
+</g>
+<g>
+<sc-for list="{{dayCols}}" as="d" hint-placeholder-count="4">
+<line x1="{{d.x}}" x2="{{d.x}}" y1="16" y2="206" stroke="#d4d4d4" stroke-width="1"></line>
+<text x="{{d.cx}}" y="224" text-anchor="middle" font-size="11" font-weight="600" fill="#0a0a0a">{{d.short}}</text>
+</sc-for>
+</g>
+<g>
+<sc-for list="{{doseMarks}}" as="m" hint-placeholder-count="13">
+<line x1="{{m.x}}" x2="{{m.x}}" y1="20" y2="190" stroke="{{m.color}}" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"></line>
+<rect x="{{m.rx}}" y="195" width="7" height="7" rx="1.5" fill="{{m.color}}"></rect>
+</sc-for>
+</g>
+<g>
+<sc-for list="{{dayLines}}" as="l" hint-placeholder-count="4">
+<polyline points="{{l.points}}" fill="none" stroke="#404040" stroke-width="1.5" stroke-linejoin="round"></polyline>
+</sc-for>
+</g>
+<g>
+<sc-for list="{{points}}" as="p" hint-placeholder-count="26">
+<circle cx="{{p.x}}" cy="{{p.y}}" r="4.5" fill="{{p.bg}}" stroke="#ffffff" stroke-width="1.5"></circle>
+</sc-for>
+</g>
+<g>
+<sc-if value="{{tip.isPoint}}" hint-placeholder-val="{{false}}">
+<circle cx="{{tip.x}}" cy="{{tip.y}}" r="8" fill="none" stroke="#0a0a0a" stroke-width="2"></circle>
+</sc-if>
+<sc-if value="{{tip.isDose}}" hint-placeholder-val="{{false}}">
+<line x1="{{tip.x}}" x2="{{tip.x}}" y1="20" y2="190" stroke="#0a0a0a" stroke-width="2"></line>
+</sc-if>
+</g>
+<g>
+<sc-for list="{{doseMarks}}" as="m" hint-placeholder-count="13">
+<rect x="{{m.hx}}" y="188" width="14" height="22" fill="transparent" tabIndex="0" aria-label="{{m.aria}}" onMouseEnter="{{m.enter}}" onFocus="{{m.enter}}" onBlur="{{leave}}" onClick="{{m.enter}}" style="cursor: pointer; outline: none"></rect>
+</sc-for>
+</g>
+<g>
+<sc-for list="{{points}}" as="p" hint-placeholder-count="26">
+<circle cx="{{p.x}}" cy="{{p.y}}" r="9" fill="transparent" tabIndex="0" aria-label="{{p.aria}}" onMouseEnter="{{p.enter}}" onFocus="{{p.enter}}" onBlur="{{leave}}" onClick="{{p.enter}}" style="cursor: pointer; outline: none"></circle>
+</sc-for>
+</g>
+</svg>
+<sc-if value="{{tip.show}}" hint-placeholder-val="{{false}}">
+<div role="tooltip" style="position: absolute; left: {{tip.left}}; top: {{tip.top}}; transform: {{tip.transform}}; width: 230px; z-index: 3; pointer-events: none; background: #ffffff; border: 1px solid #e5e5e5; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.14); padding: 12px 14px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px; font-size: 13px; line-height: 18px; color: #0a0a0a">
+<span style="font-size: 12px; font-weight: 500; color: #525252">{{tip.when}}</span>
+<div style="display: flex; align-items: center; gap: 10px">
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: {{tip.radius}}; background: {{tip.bg}}; color: {{tip.fg}}; font-size: 15px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center">{{tip.badge}}</span>
+<span style="font-size: 15px; line-height: 20px; font-weight: 600">{{tip.title}}</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<sc-for list="{{tip.lines}}" as="ln" hint-placeholder-count="3">
+<span style="color: {{ln.color}}; font-weight: {{ln.weight}}">{{ln.text}}</span>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: #404040">
+<span style="display: inline-flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 3px; background: #dcfce7; border: 1px solid #86efac"></span>{{t.legendOk}}</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 10px; height: 10px; border-radius: 2px; background: #1d4ed8"></span>{{legendP}}</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 10px; height: 10px; border-radius: 2px; background: #7e22ce"></span>{{legendM}}</span>
+</div>
+</section>
+
+<section aria-label="{{t.byDrug}}" style="display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{drugSummary}}" as="s" hint-placeholder-count="2">
+<div style="background: #ffffff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 14px; display: flex; gap: 12px; align-items: flex-start">
+<span aria-hidden="true" style="flex: none; width: 34px; height: 34px; border-radius: 8px; background: {{s.color}}; color: #ffffff; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center">{{s.code}}</span>
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 15px; font-weight: 600">{{s.title}}</span>
+<span style="font-size: 13px; line-height: 18px; color: #525252">{{s.line}}</span>
+</div>
+</div>
+</sc-for>
+</section>
+
+<section aria-labelledby="m-log-title" style="display: flex; flex-direction: column; gap: 10px">
+<h2 id="m-log-title" style="margin: 0; font-size: 16px; line-height: 22px; font-weight: 600">{{t.logTitle}}</h2>
+<div role="group" aria-label="{{t.dayFilter}}" style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px">
+<sc-for list="{{tabs}}" as="tb" hint-placeholder-count="5">
+<button type="button" onClick="{{tb.pick}}" aria-pressed="{{tb.on}}" style="flex: none; height: 40px; padding: 0 14px; border-radius: 9999px; border: 1px solid {{tb.border}}; background: {{tb.bg}}; color: {{tb.fg}}; font-family: inherit; font-size: 14px; font-weight: 600">{{tb.label}}</button>
+</sc-for>
+</div>
+<sc-for list="{{groups}}" as="gr" hint-placeholder-count="1">
+<div style="background: #ffffff; border: 1px solid #e5e5e5; border-radius: 12px; overflow: hidden">
+<div style="padding: 10px 14px; background: #fafafa; border-bottom: 1px solid #e5e5e5; font-size: 14px; font-weight: 600">{{gr.label}}</div>
+<sc-for list="{{gr.events}}" as="e" hint-placeholder-count="9">
+<div style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-bottom: 1px solid #f0f0f0; background: {{e.rowBg}}">
+<span style="flex: none; width: 40px; padding-top: 6px; font-size: 13px; color: #525252">{{e.time}}</span>
+<span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: {{e.radius}}; background: {{e.bg}}; color: {{e.fg}}; font-size: 15px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center">{{e.badge}}</span>
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0; padding-top: 1px">
+<span style="font-size: 15px; font-weight: 600">{{e.title}}</span>
+<span style="font-size: 13px; line-height: 18px; color: #525252">{{e.sub}}</span>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</section>
+
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    var self = this;
+    this._onStorage = function (e) {
+      if (e.key === 'painApp.lang' && (e.newValue === 'en' || e.newValue === 'pl')) self.setState({ lang: e.newValue });
+    };
+    try { window.addEventListener('storage', this._onStorage); } catch (e) {}
+  }
+  componentWillUnmount() {
+    try { window.removeEventListener('storage', this._onStorage); } catch (e) {}
+  }
+  getLang() {
+    var st = this.state || {};
+    if (st.lang) return st.lang;
+    try { var s = window.localStorage.getItem('painApp.lang'); if (s === 'en' || s === 'pl') return s; } catch (e) {}
+    return 'en';
+  }
+  setLang(l) {
+    try { window.localStorage.setItem('painApp.lang', l); } catch (e) {}
+    this.setState({ lang: l });
+  }
+  strings(lang) {
+    var S = {
+      en: {
+        langLabel: 'Language', back: 'Back to pain check', title: 'Pain history',
+        patient: 'Maria Nowak · MRN 004 2817 · Ward 4B, Bed 12 · Hip replacement',
+        range: '16–19 Nov 2026 · 4 days', sample: 'Sample data',
+        sAvg: 'Average pain', sOk: 'At acceptable level (≤3)', sResp: 'Staff response', sChange: 'Change after dose',
+        trend: '{da} {a} → {db} {b}', ok: '{a} of {b} readings',
+        resp: '{c} with no dose within 60 min', change: 'Down after {a} of {b} doses',
+        spikeTitle: 'Spike to {p} · {d}, {t}',
+        spikeText: '{drug} given {r} min later. Pain was {after} 30 min after.',
+        chartTitle: 'Pain and medication', legendOk: 'Acceptable (≤3)', chartHint: 'Tap a dot or a dose marker for details.',
+        tReported: 'Reported by the patient', tOk: 'Within acceptable level (≤3)',
+        tNoDose: 'Above 3: no medication within 60 min', tNext: '{drug} given {r} min later',
+        tPost: '{c} since {drug} at {t}', tBy: 'Given by {by}', tBefore: 'Pain before: {p} at {t}',
+        tResp: 'Response time: {r} min', tScheduled: 'Scheduled dose (pain was 3 or below)',
+        tAfter: 'Pain 30 min later: {p} ({c})', tConfirmed: 'Confirmed by the patient',
+
+        chartAria: 'Pain readings from 16 to 19 November with medication doses. Average pain {a}. Highest reading {p} on {d} at {t}.',
+        byDrug: 'Effect by medication',
+        drugLine: '{n} · average change {c} after 30 min · ≤3 afterwards in {ok} of {total}',
+        logTitle: 'Timeline', dayFilter: 'Show day', all: 'All',
+        pain: 'Pain', afterDose: '{c} since dose', respAfter: '{r} min after pain {p}',
+        scheduled: 'Scheduled', confirmed: 'patient confirmed', staff: 'RN',
+        labels: ['No pain', 'Mild', 'Moderate', 'Severe', 'Worst possible'],
+        drugs: { P: { name: 'Paracetamol', dose: '1 g', route: 'oral' }, M: { name: 'Morphine', dose: '2.5 mg', route: 'IV' } },
+        days: ['Mon 16 Nov', 'Tue 17 Nov', 'Wed 18 Nov', 'Thu 19 Nov'], daysShort: ['Mon', 'Tue', 'Wed', 'Thu'], tabs: ['Mon 16', 'Tue 17', 'Wed 18', 'Thu 19']
+      },
+      pl: {
+        langLabel: 'Język', back: 'Wróć do oceny bólu', title: 'Historia bólu',
+        patient: 'Maria Nowak · Nr 004 2817 · Oddział 4B, łóżko 12 · Endoproteza stawu biodrowego',
+        range: '16–19 lis 2026 · 4 dni', sample: 'Dane przykładowe',
+        sAvg: 'Średni ból', sOk: 'Na poziomie akceptowalnym (≤3)', sResp: 'Reakcja personelu', sChange: 'Zmiana po leku',
+        trend: '{da} {a} → {db} {b}', ok: '{a} z {b} odczytów',
+        resp: '{c} bez leku w ciągu 60 min', change: 'Spadek po {a} z {b} dawek',
+        spikeTitle: 'Skok do {p} · {d}, {t}',
+        spikeText: '{drug} podana po {r} min. Po 30 min ból wynosił {after}.',
+        chartTitle: 'Ból i leki', legendOk: 'Akceptowalny (≤3)', chartHint: 'Dotknij kropki lub znacznika leku, aby zobaczyć szczegóły.',
+        tReported: 'Zgłoszone przez pacjenta', tOk: 'Na poziomie akceptowalnym (≤3)',
+        tNoDose: 'Powyżej 3: brak leku w ciągu 60 min', tNext: '{drug}: podano po {r} min',
+        tPost: '{c} od podania: {drug}, {t}', tBy: 'Podał(a): {by}', tBefore: 'Ból przed: {p} o {t}',
+        tResp: 'Czas reakcji: {r} min', tScheduled: 'Dawka planowa (ból 3 lub mniej)',
+        tAfter: 'Ból po 30 min: {p} ({c})', tConfirmed: 'Potwierdzone przez pacjenta',
+
+        chartAria: 'Odczyty bólu od 16 do 19 listopada z podanymi lekami. Średni ból {a}. Najwyższy odczyt {p}: {d}, {t}.',
+        byDrug: 'Skuteczność leków',
+        drugLine: '{n} · średnia zmiana {c} po 30 min · ≤3 po podaniu: {ok} z {total}',
+        logTitle: 'Oś czasu', dayFilter: 'Pokaż dzień', all: 'Wszystkie',
+        pain: 'Ból', afterDose: '{c} od podania leku', respAfter: '{r} min po zgłoszeniu bólu {p}',
+        scheduled: 'Planowo', confirmed: 'potwierdzone przez pacjenta', staff: 'Piel.',
+        labels: ['Brak bólu', 'Łagodny', 'Umiarkowany', 'Silny', 'Najgorszy możliwy'],
+        drugs: { P: { name: 'Paracetamol', dose: '1 g', route: 'doustnie' }, M: { name: 'Morfina', dose: '2,5 mg', route: 'dożylnie' } },
+        days: ['pon. 16 lis', 'wt. 17 lis', 'śr. 18 lis', 'czw. 19 lis'], daysShort: ['pon.', 'wt.', 'śr.', 'czw.'], tabs: ['pon. 16', 'wt. 17', 'śr. 18', 'czw. 19']
+      }
+    };
+    return S[lang] || S.en;
+  }
+  colors(p) {
+    var c = [
+      ['#166534', '#ffffff'], ['#15803d', '#ffffff'], ['#22c55e', '#052e16'], ['#84cc16', '#1a2e05'],
+      ['#a3e635', '#1a2e05'], ['#facc15', '#422006'], ['#fbbf24', '#451a03'], ['#fb923c', '#431407'],
+      ['#f97316', '#431407'], ['#dc2626', '#ffffff'], ['#991b1b', '#ffffff']
+    ];
+    return c[Math.max(0, Math.min(10, p))];
+  }
+  data() {
+    return {
+      drugColors: { P: '#1d4ed8', M: '#7e22ce' },
+      days: [
+        { readings: [['07:40', 5], ['08:30', 3], ['13:40', 5], ['14:30', 3], ['19:40', 5], ['20:30', 4]],
+          doses: [['08:00', 'P', '214'], ['14:00', 'P', '108'], ['20:00', 'P', '331']] },
+        { readings: [['07:40', 4], ['08:30', 2], ['13:40', 5], ['14:30', 3], ['19:40', 4], ['20:30', 3]],
+          doses: [['08:00', 'P', '214'], ['14:00', 'P', '108'], ['20:00', 'P', '331']] },
+        { readings: [['07:40', 4], ['08:30', 2], ['11:20', 6], ['12:05', 3], ['13:40', 4], ['14:30', 2], ['19:40', 4], ['20:30', 4]],
+          doses: [['08:00', 'P', '214'], ['11:35', 'M', '108'], ['14:00', 'P', '108'], ['20:00', 'P', '331']] },
+        { readings: [['07:40', 3], ['08:30', 2], ['13:40', 3], ['14:30', 1], ['19:40', 3], ['20:30', 2]],
+          doses: [['08:00', 'P', '214'], ['14:00', 'P', '108'], ['20:00', 'P', '331']] }
+      ]
+    };
+  }
+  renderVals() {
+    var self = this;
+    var st = this.state || {};
+    var lang = this.getLang();
+    var t = this.strings(lang);
+    var D = this.data();
+    var dayFilter = st.day != null ? st.day : 'all';
+    var X0 = 28, DW = 81;
+    function fill(s, o) { return s.replace(/\{(\w+)\}/g, function (m, k) { return o[k] != null ? o[k] : m; }); }
+    function num(x, d) { var s = x.toFixed(d); return lang === 'pl' ? s.replace('.', ',') : s; }
+    function signed(x, d) { return (x < 0 ? '−' : (x > 0 ? '+' : '')) + num(Math.abs(x), d); }
+    function mins(s) { var a = s.split(':'); return Number(a[0]) * 60 + Number(a[1]); }
+    function xOf(d, m) { return Math.round((X0 + d * DW + ((m - 360) / 960) * DW) * 10) / 10; }
+    function yOf(p) { return 190 - p * 17; }
+    function cat(p) { return p === 0 ? 0 : (p <= 3 ? 1 : (p <= 6 ? 2 : (p <= 9 ? 3 : 4))); }
+    var pInfo = [], dInfo = [];
+    function doseWord(n) {
+      if (lang !== 'pl') return n + (n === 1 ? ' dose' : ' doses');
+      if (n === 1) return '1 dawka';
+      var a = n % 10, b = n % 100;
+      return n + (a >= 2 && a <= 4 && (b < 12 || b > 14) ? ' dawki' : ' dawek');
+    }
+
+    var points = [], dayLines = [], dayCols = [], doseMarks = [], groups = [];
+    var all = [], alerts = 0, unanswered = 0, responses = [], changes = [], downCount = 0;
+    var perDrug = {}, order = [];
+    var spike = null, spikeInfo = null;
+
+    D.days.forEach(function (day, d) {
+      var rs = day.readings.map(function (r) { return { t: mins(r[0]), time: r[0], p: r[1] }; });
+      var ds = day.doses.map(function (x) { return { t: mins(x[0]), time: x[0], code: x[1], by: t.staff + ' ' + x[2] }; });
+      ds.forEach(function (x) {
+        x.before = null; x.after = null;
+        rs.forEach(function (r) {
+          if (r.t <= x.t && x.t - r.t <= 60) x.before = r;
+          if (!x.after && r.t > x.t && r.t - x.t <= 45) x.after = r;
+        });
+        x.resp = x.before && x.before.p > 3 ? (x.t - x.before.t) : null;
+        x.change = x.before && x.after ? x.after.p - x.before.p : null;
+      });
+      function chTxt(c) { return c === 0 ? '0' : signed(c, 0); }
+      function chCol(c) { return c < 0 ? '#15803d' : (c > 0 ? '#b91c1c' : '#404040'); }
+      var sum = 0;
+      var pts = rs.map(function (r) {
+        var col = self.colors(r.p);
+        var pt = { x: xOf(d, r.t), y: yOf(r.p), bg: col[0] };
+        var lines = [];
+        var post = ds.filter(function (x) { return x.after === r; })[0];
+        var next = ds.filter(function (x) { return x.t > r.t && x.t - r.t <= 60; })[0];
+        if (post && post.change != null) lines.push({ text: fill(t.tPost, { c: chTxt(post.change), drug: t.drugs[post.code].name, t: post.time }), color: chCol(post.change), weight: '600' });
+        if (r.p > 3 && next) lines.push({ text: fill(t.tNext, { drug: t.drugs[next.code].name, r: next.t - r.t }), color: '#404040', weight: '400' });
+        if (r.p > 3 && !next) lines.push({ text: t.tNoDose, color: '#b91c1c', weight: '600' });
+        if (r.p <= 3) lines.push({ text: t.tOk, color: '#15803d', weight: '400' });
+        lines.push({ text: t.tReported, color: '#525252', weight: '400' });
+        var idx = pInfo.length;
+        pInfo.push({ x: pt.x, y: pt.y, when: t.days[d] + ' · ' + r.time, badge: r.p, bg: col[0], fg: col[1], radius: '9999px', title: t.pain + ' ' + r.p + ' · ' + t.labels[cat(r.p)], lines: lines });
+        pt.aria = t.pain + ' ' + r.p + ', ' + t.days[d] + ' ' + r.time;
+        pt.enter = function () { self.setState({ hover: 'p' + idx }); };
+        points.push(pt);
+        all.push(r.p);
+        sum += r.p;
+        if (!spike || r.p > spike.p) spike = { p: r.p, d: d, r: r };
+        return pt.x + ',' + pt.y;
+      });
+      dayLines.push({ points: pts.join(' ') });
+      var avg = sum / rs.length;
+      dayCols.push({ x: X0 + d * DW, cx: X0 + d * DW + DW / 2, short: t.daysShort[d], avg: avg });
+
+      rs.forEach(function (r) {
+        if (r.p > 3) {
+          alerts++;
+          if (!ds.some(function (x) { return x.t > r.t && x.t - r.t <= 60; })) unanswered++;
+        }
+      });
+
+      var events = [];
+      var postChange = {};
+      ds.forEach(function (x) {
+        var drug = t.drugs[x.code], color = D.drugColors[x.code];
+        var before = x.before, after = x.after, resp = x.resp, change = x.change;
+        var mx = xOf(d, x.t);
+        var di = dInfo.length;
+        var dl = [{ text: fill(t.tBy, { by: x.by }), color: '#404040', weight: '400' }];
+        if (x.before) dl.push({ text: fill(t.tBefore, { p: x.before.p, t: x.before.time }), color: '#404040', weight: '400' });
+        dl.push(x.resp != null ? { text: fill(t.tResp, { r: x.resp }), color: '#0a0a0a', weight: '600' } : { text: t.tScheduled, color: '#525252', weight: '400' });
+        if (x.after) dl.push({ text: fill(t.tAfter, { p: x.after.p, c: x.change == null ? '—' : chTxt(x.change) }), color: x.change == null ? '#404040' : chCol(x.change), weight: '600' });
+        dl.push({ text: t.tConfirmed, color: '#15803d', weight: '400' });
+        dInfo.push({ x: mx, y: 198, when: t.days[d] + ' · ' + x.time, badge: x.code, bg: color, fg: '#ffffff', radius: '8px', title: drug.name + ' ' + drug.dose + ' · ' + drug.route, lines: dl });
+        var denter = function () { self.setState({ hover: 'd' + di }); };
+        doseMarks.push({ x: mx, rx: mx - 3.5, hx: mx - 7, color: color, aria: drug.name + ', ' + t.days[d] + ' ' + x.time, enter: denter });
+        if (resp != null) responses.push(resp);
+        if (change != null) { changes.push(change); if (change < 0) downCount++; if (after) postChange[after.t] = change; }
+        if (!perDrug[x.code]) { perDrug[x.code] = { n: 0, sum: 0, ok: 0 }; order.push(x.code); }
+        var pd = perDrug[x.code];
+        pd.n++;
+        if (change != null) pd.sum += change;
+        if (after && after.p <= 3) pd.ok++;
+        if (x.code === 'M' && !spikeInfo) spikeInfo = { drug: drug.name, r: resp, after: after ? after.p : '—' };
+        events.push({
+          t: x.t, time: x.time, badge: x.code, bg: color, fg: '#ffffff', radius: '8px', rowBg: x.code === 'M' ? '#faf5ff' : '#ffffff',
+          title: drug.name + ' ' + drug.dose + ' · ' + drug.route,
+          sub: x.by + ' · ' + (resp != null ? fill(t.respAfter, { r: resp, p: before.p }) : t.scheduled) + ' · ' + t.confirmed
+        });
+      });
+      rs.forEach(function (r) {
+        var col = self.colors(r.p);
+        var label = t.labels[cat(r.p)];
+        var ch = postChange[r.t];
+        events.push({
+          t: r.t + 0.1, time: r.time, badge: r.p, bg: col[0], fg: col[1], radius: '9999px', rowBg: '#ffffff',
+          title: t.pain + ' ' + r.p + ' · ' + label,
+          sub: ch != null ? fill(t.afterDose, { c: ch === 0 ? '0' : signed(ch, 0) }) : ''
+        });
+      });
+      events.sort(function (a, b) { return a.t - b.t; });
+      if (dayFilter === 'all' || dayFilter === d) groups.push({ label: t.days[d], events: events });
+    });
+
+    var total = all.reduce(function (a, b) { return a + b; }, 0);
+    var avgAll = total / all.length;
+    var okN = all.filter(function (p) { return p <= 3; }).length;
+    var avgResp = responses.length ? Math.round(responses.reduce(function (a, b) { return a + b; }, 0) / responses.length) : null;
+    var avgChange = changes.length ? changes.reduce(function (a, b) { return a + b; }, 0) / changes.length : 0;
+    var first = dayCols[0], last = dayCols[dayCols.length - 1];
+
+    var stats = [
+      { label: t.sAvg, value: num(avgAll, 1), sub: fill(t.trend, { da: first.short, a: num(first.avg, 1), db: last.short, b: num(last.avg, 1) }) },
+      { label: t.sOk, value: Math.round(okN / all.length * 100) + '%', sub: fill(t.ok, { a: okN, b: all.length }) },
+      { label: t.sResp, value: avgResp != null ? avgResp + ' min' : '—', sub: fill(t.resp, { c: unanswered }) },
+      { label: t.sChange, value: signed(avgChange, 1), sub: fill(t.change, { a: downCount, b: changes.length }) }
+    ];
+
+    var sc = self.colors(spike.p);
+    var spikeCard = {
+      p: spike.p, bg: sc[0], fg: sc[1],
+      title: fill(t.spikeTitle, { p: spike.p, d: t.days[spike.d], t: spike.r.time }),
+      text: spikeInfo ? fill(t.spikeText, { drug: spikeInfo.drug, r: spikeInfo.r, after: spikeInfo.after }) : ''
+    };
+
+    var drugSummary = order.map(function (k) {
+      var pd = perDrug[k], drug = t.drugs[k];
+      return {
+        code: k, color: D.drugColors[k],
+        title: drug.name + ' ' + drug.dose + ' · ' + drug.route,
+        line: fill(t.drugLine, { n: doseWord(pd.n), c: signed(pd.n ? pd.sum / pd.n : 0, 1), ok: pd.ok, total: pd.n })
+      };
+    });
+
+    var tabDefs = [{ key: 'all', label: t.all }].concat(t.tabs.map(function (l, i) { return { key: i, label: l }; }));
+    var tabs = tabDefs.map(function (tb) {
+      var on = tb.key === dayFilter;
+      return {
+        label: tb.label, on: on,
+        bg: on ? '#171717' : '#ffffff', fg: on ? '#fafafa' : '#0a0a0a', border: on ? '#171717' : '#e5e5e5',
+        pick: function () { self.setState({ day: tb.key }); }
+      };
+    });
+
+    var hov = (this.state || {}).hover || null;
+    var tip = { show: false, isPoint: false, isDose: false, x: 0, y: 0, lines: [] };
+    if (hov) {
+      var info = hov.charAt(0) === 'p' ? pInfo[Number(hov.slice(1))] : dInfo[Number(hov.slice(1))];
+      if (info) {
+        var lp = info.x / 360 * 100, tp = info.y / 232 * 100;
+        var above = info.y > 232 * 0.45;
+        var tx = lp < 30 ? '-8%' : (lp > 70 ? '-92%' : '-50%');
+        tip = Object.assign({}, info, { show: true, isPoint: hov.charAt(0) === 'p', isDose: hov.charAt(0) === 'd', left: lp + '%', top: tp + '%', transform: 'translate(' + tx + ', ' + (above ? 'calc(-100% - 16px)' : '16px') + ')' });
+      }
+    }
+    var onS = { bg: '#ffffff', fg: '#0a0a0a', sh: '0 1px 2px rgba(0,0,0,0.12)' };
+    var offS = { bg: 'transparent', fg: '#525252', sh: 'none' };
+    var en = lang === 'en' ? onS : offS, pl = lang === 'pl' ? onS : offS;
+
+    return {
+      lang: lang, t: t,
+      enOn: lang === 'en', plOn: lang === 'pl',
+      enBg: en.bg, enFg: en.fg, enShadow: en.sh, plBg: pl.bg, plFg: pl.fg, plShadow: pl.sh,
+      setEn: function () { self.setLang('en'); },
+      setPl: function () { self.setLang('pl'); },
+      tip: tip, leave: function () { self.setState({ hover: null }); },
+      stats: stats, spike: spikeCard, drugSummary: drugSummary, tabs: tabs, groups: groups,
+      legendP: t.drugs.P.name + ' ' + t.drugs.P.dose,
+      legendM: t.drugs.M.name + ' ' + t.drugs.M.dose,
+      points: points, dayLines: dayLines, dayCols: dayCols, doseMarks: doseMarks,
+      gridLines: [0, 2, 4, 6, 8, 10].map(function (v) { return { v: v, y: yOf(v), ty: yOf(v) + 3.5 }; }),
+      chartAria: fill(t.chartAria, { a: num(avgAll, 1), p: spike.p, d: t.days[spike.d], t: spike.r.time })
+    };
+  }
+}
+</script>
+</body>
+</html>

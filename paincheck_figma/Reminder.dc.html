@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lock screen: pain check reminder</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0a0a0a}a:hover{color:#0a0a0a}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+a:focus-visible,button:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
+</style>
+</helmet>
+<div lang="{{lang}}" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; overflow: hidden; background: #1c1f26; color: #fafafa; font-family: Geist, Inter, system-ui, sans-serif; display: flex; flex-direction: column; align-items: center">
+
+<div aria-hidden="true" style="position: absolute; width: 520px; height: 520px; left: -160px; top: 420px; border-radius: 9999px; background: #2a3a4a; opacity: 0.55"></div>
+<div aria-hidden="true" style="position: absolute; width: 380px; height: 380px; right: -150px; top: 120px; border-radius: 9999px; background: #2f2a3d; opacity: 0.6"></div>
+
+<div style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding-top: 72px">
+<span aria-hidden="true" style="color: #e5e5e5; display: inline-flex; margin-bottom: 8px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+</span>
+<span style="font-size: 18px; font-weight: 500; color: #e5e5e5">{{dateText}}</span>
+<span style="font-size: 88px; line-height: 92px; font-weight: 600; letter-spacing: -0.03em; color: #fafafa">{{clock}}</span>
+</div>
+
+<div style="position: relative; width: 100%; box-sizing: border-box; padding: 28px 12px 0; display: flex; flex-direction: column; gap: 8px">
+
+<sc-if value="{{showNotif}}" hint-placeholder-val="{{true}}">
+<div role="region" aria-label="{{t.notifLabel}}" style="background: rgba(250,250,250,0.94); color: #0a0a0a; border-radius: 22px; padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.25)">
+<a href="Main.dc.html" style="display: flex; gap: 12px; align-items: flex-start; text-decoration: none">
+<span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 10px; background: #171717; display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; padding: 7px; box-sizing: border-box">
+<span style="border-radius: 3px; background: #22c55e"></span><span style="border-radius: 3px; background: #facc15"></span><span style="border-radius: 3px; background: #f97316"></span><span style="border-radius: 3px; background: #dc2626"></span>
+</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-size: 13px; color: #525252"><span style="font-weight: 600; letter-spacing: 0.02em">{{t.app}}</span><span>{{t.now}}</span></span>
+<span style="font-size: 16px; line-height: 21px; font-weight: 600">{{t.title}}</span>
+<span style="font-size: 15px; line-height: 20px; color: #262626">{{body}}</span>
+</span>
+</a>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<button type="button" onClick="{{snooze}}" style="height: 48px; border-radius: 12px; border: 0; background: rgba(0,0,0,0.07); color: #0a0a0a; font-family: inherit; font-size: 15px; font-weight: 600">{{t.snooze}}</button>
+<a href="Main.dc.html" style="height: 48px; border-radius: 12px; background: #171717; color: #fafafa; font-size: 15px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px">{{t.record}}</a>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{snoozed}}" hint-placeholder-val="{{false}}">
+<div role="status" style="background: rgba(250,250,250,0.94); color: #0a0a0a; border-radius: 22px; padding: 14px 16px; display: flex; align-items: center; gap: 12px">
+<span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 10px; background: #e5e5e5; color: #404040; display: inline-flex; align-items: center; justify-content: center">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2 2"></path><path d="M5 3 2 6"></path><path d="m22 6-3-3"></path></svg>
+</span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 15px; font-weight: 600">{{t.snoozedTitle}}</span>
+<span style="font-size: 14px; color: #404040">{{snoozedText}}</span>
+</span>
+<button type="button" onClick="{{undo}}" style="flex: none; height: 44px; padding: 0 12px; border-radius: 10px; border: 0; background: transparent; color: #0a0a0a; font-family: inherit; font-size: 15px; font-weight: 600; text-decoration: underline">{{t.undo}}</button>
+</div>
+</sc-if>
+
+</div>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 28px; display: flex; flex-direction: column; align-items: center; gap: 14px">
+<span style="font-size: 14px; color: #d4d4d4">{{t.swipe}}</span>
+<span aria-hidden="true" style="width: 134px; height: 5px; border-radius: 9999px; background: #fafafa"></span>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"showMedication":{"editor":"boolean","default":true,"section":"Notification"},"language":{"editor":"enum","options":["auto","en","pl"],"default":"auto","section":"Notification"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    var self = this;
+    this._onStorage = function (e) {
+      if (e.key === 'painApp.lang' && (e.newValue === 'en' || e.newValue === 'pl')) self.setState({ lang: e.newValue });
+    };
+    try { window.addEventListener('storage', this._onStorage); } catch (e) {}
+  }
+  componentWillUnmount() {
+    try { window.removeEventListener('storage', this._onStorage); } catch (e) {}
+  }
+  getLang() {
+    var forced = this.props.language;
+    if (forced === 'en' || forced === 'pl') return forced;
+    var st = this.state || {};
+    if (st.lang) return st.lang;
+    try { var s = window.localStorage.getItem('painApp.lang'); if (s === 'en' || s === 'pl') return s; } catch (e) {}
+    return 'en';
+  }
+  strings(lang) {
+    var S = {
+      en: {
+        notifLabel: 'Notification', app: 'PAIN CHECK', now: 'now',
+        title: 'How is your pain now?',
+        bodyMed: 'It’s been 30 minutes since your morphine. Tap to record your pain level from 0 to 10.',
+        bodyGeneric: 'It’s time for your pain check. Tap to record your pain level from 0 to 10.',
+        snooze: 'In 10 min', record: 'Record pain',
+        snoozedTitle: 'Reminder snoozed', snoozedText: 'We’ll remind you again at {t}.', undo: 'Undo',
+        swipe: 'Swipe up to open',
+        date: 'Wednesday, 18 November'
+      },
+      pl: {
+        notifLabel: 'Powiadomienie', app: 'OCENA BÓLU', now: 'teraz',
+        title: 'Jak bardzo Cię teraz boli?',
+        bodyMed: 'Minęło 30 minut od podania morfiny. Dotknij, aby ocenić ból w skali od 0 do 10.',
+        bodyGeneric: 'Czas na ocenę bólu. Dotknij, aby ocenić ból w skali od 0 do 10.',
+        snooze: 'Za 10 min', record: 'Oceń ból',
+        snoozedTitle: 'Przypomnienie odłożone', snoozedText: 'Przypomnimy ponownie o {t}.', undo: 'Cofnij',
+        swipe: 'Przesuń w górę, aby otworzyć',
+        date: 'środa, 18 listopada'
+      }
+    };
+    return S[lang] || S.en;
+  }
+  renderVals() {
+    var self = this;
+    var st = this.state || {};
+    var lang = this.getLang();
+    var t = this.strings(lang);
+    var showMed = this.props.showMedication ?? true;
+    var snoozed = !!st.snoozed;
+    return {
+      lang: lang, t: t,
+      clock: '12:05', dateText: t.date,
+      body: showMed ? t.bodyMed : t.bodyGeneric,
+      showNotif: !snoozed, snoozed: snoozed,
+      snoozedText: t.snoozedText.replace('{t}', '12:15'),
+      snooze: function () { self.setState({ snoozed: true }); },
+      undo: function () { self.setState({ snoozed: false }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

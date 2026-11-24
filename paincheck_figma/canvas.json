@@ -1,0 +1,68 @@
+{
+  "artboards": [
+    {
+      "file": "Reminder.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Phone · Lock screen reminder (30 min after medication)",
+      "is_interactive": true,
+      "radius": 24
+    },
+    {
+      "file": "Main.dc.html",
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Phone · Choose pain level",
+      "is_interactive": true,
+      "radius": 24
+    },
+    {
+      "file": "Confirm.dc.html",
+      "x": 940,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Phone · Confirm (Are you sure?)",
+      "is_interactive": true,
+      "radius": 24
+    },
+    {
+      "file": "Saved.dc.html",
+      "x": 1410,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Phone · Recorded",
+      "is_interactive": true,
+      "radius": 24
+    },
+    {
+      "file": "HistoryPhone.dc.html",
+      "x": 1880,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Pain history · phone",
+      "is_interactive": true,
+      "radius": 24
+    }
+  ],
+  "annotations": [
+    {
+      "id": "title",
+      "x": 0,
+      "y": -260,
+      "w": 240,
+      "maxW": 2270,
+      "text": "Pain check: patient phone flow",
+      "kind": "title1"
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}
