@@ -3,11 +3,12 @@ import request from 'supertest';
 import { describe, expect, it, vi } from 'vitest';
 import { createApp } from './app';
 import { createDbStore } from './db';
+import { createFileRepo } from './repo';
 import { ReminderService } from './reminders';
 
 function setup() {
   const send = vi.fn(async () => {});
-  const svc = new ReminderService(createDbStore(null), send, () => 1000);
+  const svc = new ReminderService({ repo: createFileRepo(createDbStore(null)), send, dispatch: async () => {}, now: () => 1000 });
   return { app: createApp(svc, 'PUBKEY', () => 1000), send };
 }
 const validSub = { subscription: { endpoint: 'https://push.example/1', keys: { p256dh: 'a', auth: 'b' } }, lang: 'pl' };
@@ -28,6 +29,7 @@ describe('API', () => {
     const { app } = setup();
     const res = await request(app).post('/api/doses').send({ drug: 'M', at: 1000 }).expect(201);
     expect(res.body.reminderDueAt).toBe(1000 + 30 * 60_000);
+    await request(app).get('/api/nope').expect(404);
     await request(app).post('/api/doses').send({ drug: 'X' }).expect(400);
     await request(app).post('/api/doses').send({ drug: 'P', at: 'now' }).expect(400);
   });

@@ -2,14 +2,12 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
-import { createRequire } from 'node:module';
+import * as webpush from 'web-push';
 import { createApp } from './app';
 import { createDbStore } from './db';
-import { ReminderService } from './reminders';
-import type { PushSender } from './types';
-
-// web-push is CommonJS and has no usable ESM default export under Node/tsx.
-const webpush = createRequire(import.meta.url)('web-push') as typeof import('web-push');
+import { createFileRepo } from './repo';
+import { DEFAULT_REMINDER_DELAY_MS, ReminderService } from './reminders';
+import { createSender } from './sender';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = process.env.DATA_DIR ?? resolve(here, '../data');
@@ -29,13 +27,17 @@ function loadVapid(): { publicKey: string; privateKey: string } {
 }
 
 const vapid = loadVapid();
-webpush.setVapidDetails(process.env.VAPID_SUBJECT ?? 'https://localhost', vapid.publicKey, vapid.privateKey);
+const send = createSender(webpush, { subject: process.env.VAPID_SUBJECT ?? 'https://localhost', ...vapid });
 
-const send: PushSender = async (sub, payload) => {
-  await webpush.sendNotification({ endpoint: sub.endpoint, keys: sub.keys }, JSON.stringify(payload), { TTL: 60 * 60 });
-};
+const service: ReminderService = new ReminderService({
+  repo: createFileRepo(createDbStore(join(DATA_DIR, 'db.json'))),
+  send,
+  delayMs: Number(process.env.REMINDER_DELAY_MS ?? DEFAULT_REMINDER_DELAY_MS),
+  // In-process: wait for the due time, then send.
+  dispatch: async (r) => void service.fire(r.id).catch((e) => console.error('fire failed', e)),
+});
+void service.resumePending();
 
-const service = new ReminderService(createDbStore(join(DATA_DIR, 'db.json')), send);
 const app = createApp(service, vapid.publicKey);
 
 const dist = resolve(here, '../../dist');
@@ -44,5 +46,4 @@ if (existsSync(dist)) {
   app.get('/{*splat}', (_req, res) => void res.sendFile(join(dist, 'index.html')));
 }
 
-setInterval(() => void service.tick().catch((e) => console.error('tick failed', e)), 15_000);
 app.listen(PORT, () => console.log(`Pain check server on http://localhost:${PORT}`));
