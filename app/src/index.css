@@ -1,0 +1,14 @@
+* { box-sizing: border-box; }
+body { margin: 0; background: #e5e5e5; font-family: Geist, Inter, system-ui, sans-serif; color: #0a0a0a; }
+a { color: #171717; }
+a:hover { color: #404040; }
+button { cursor: pointer; -webkit-tap-highlight-color: transparent; font-family: inherit; }
+button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; }
+button:active { transform: scale(0.98); }
+.phone { position: relative; width: 100%; max-width: 430px; min-height: 100dvh; margin: 0 auto; background: #fff; overflow: hidden; display: flex; flex-direction: column; }
+@media (min-width: 600px) { .phone { min-height: 0; height: min(900px, 100dvh); margin-top: max(0px, calc((100dvh - 900px) / 2)); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,.25); } }
+.btn { height: 68px; display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: 10px; font-size: 22px; font-weight: 600; text-decoration: none; }
+.btn-primary { border: 0; background: #171717; color: #fafafa; }
+.btn-primary:hover { color: #fafafa; background: #262626; }
+.btn-secondary { border: 1px solid #d4d4d4; background: #fff; color: #0a0a0a; }
+.tabs-scroll { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
