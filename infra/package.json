@@ -1,0 +1,36 @@
+{
+  "name": "paincheck-infra",
+  "version": "0.1.0",
+  "description": "",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "build": "npm --prefix ../app run build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "synth": "npm run build && cdk synth",
+    "diff": "npm run build && cdk diff",
+    "deploy": "npm run build && cdk deploy",
+    "destroy": "cdk destroy",
+    "cdk": "cdk"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "aws-cdk-lib": "^2.278.0",
+    "constructs": "^10.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.7",
+    "aws-cdk": "^2.1149.0",
+    "esbuild": "^0.28.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.1"
+  },
+  "private": true
+}
